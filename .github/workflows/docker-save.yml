@@ -7,11 +7,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1. 专门腾出空间，删掉虚拟机自带的无用大型软件（如 .NET、Android SDK）
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+
+      # 2. 拉取并打包
       - name: Pull and Save Docker Image
         run: |
-          docker pull openwebui/openwebui:latest
-          docker save openwebui/openwebui:latest | gzip > openwebui.tar.gz
+          echo "=== 开始拉取镜像 ==="
+          docker pull openwebui/open-webui
+          
+          echo "=== 开始打包并压缩 ==="
+          # 使用 pigz 或 gzip 边读边压
+          docker save openwebui/open-webui | gzip > openwebui.tar.gz
+          echo "=== 打包完成 ==="
 
+      # 3. 上传大包
       - name: Upload Image Artifact
         uses: actions/upload-artifact@v4
         with:
