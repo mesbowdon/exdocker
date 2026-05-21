@@ -17,10 +17,10 @@ jobs:
       # 2. 拉取并打包
       - name: Pull and Save Docker Image
         run: |
-          docker pull openwebui/openwebui:latest
+          docker pull openwebui/open-webui:latest
           # 建立一个叫 target 的临时文件夹用来装推送到 Gitee 的东西
           mkdir target
-          docker save openwebui/openwebui:latest | gzip > target/openwebui.tar.gz
+          docker save openwebui/open-webui:latest | gzip > target/openwebui.tar.gz
 
       # 3. 绕过 Gitee 的单文件大尺寸限制并强行推送
       - name: Push to Gitee
