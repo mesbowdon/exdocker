@@ -1,0 +1,20 @@
+﻿name: Docker Image Packer
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull and Save Docker Image
+        run: |
+          docker pull openwebui/openwebui:latest
+          docker save openwebui/openwebui:latest | gzip > openwebui.tar.gz
+
+      - name: Upload Image Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openwebui-image-package
+          path: openwebui.tar.gz
+          retention-days: 1
