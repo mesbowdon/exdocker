@@ -30,8 +30,15 @@ jobs:
         run: |
           cd target
           git init
-          # === ⚠️请把下面这行的 URL 替换为你刚刚在 Gitee 创建的仓库克隆地址 ⚠️ ===
-          git remote add origin https://${GITEE_USER}:${GITEE_PASS}@gitee.com/mesbowdon/openwebui-package.git
+          
+          # === 修改点 1：让 Git 记住密码，不再把密码塞进 URL 里 ===
+          git config --local credential.helper store
+          echo "https://${GITEE_USER}:${GITEE_PASS}@gitee.com" > ~/.git-credentials
+          
+          # === 修改点 2：这里使用纯净的普通 URL，绝对不会再报 Bad hostname 错误 ===
+          # ⚠️ 请把下面这行的 URL 替换为你真实的 Gitee 仓库克隆地址 ⚠️
+          git remote add origin https://gitee.com/mesbowdon/openwebui-package.git
+          
           git branch -M main
           git add openwebui.tar.gz
           git config --global user.name "GitHub Action"
@@ -39,6 +46,5 @@ jobs:
           git commit -m "delivery: openwebui image package"
           
           echo "=== 开始向 Gitee 发起冲击，大包全速上传中 ==="
-          # 强行推送到 Gitee，-f 代表覆盖，确保仓库里永远只有最新这一个2G大包，不占额外空间
           git push -f origin main
           echo "=== 传输完毕！请回到国内网络享受极速下载 ==="
