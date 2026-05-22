@@ -31,13 +31,13 @@ jobs:
           cd target
           git init
           
-          # === 修改点 1：让 Git 记住密码，不再把密码塞进 URL 里 ===
-          git config --local credential.helper store
-          echo "https://${GITEE_USER}:${GITEE_PASS}@gitee.com" > ~/.git-credentials
+          # === 核心修复：用 Python 自动将账号密码进行安全 URL 编码 ===
+          ENCODED_USER=$(python3 -c "import urllib.parse; print(urllib.parse.quote('${GITEE_USER}'))")
+          ENCODED_PASS=$(python3 -c "import urllib.parse; print(urllib.parse.quote('${GITEE_PASS}'))")
           
-          # === 修改点 2：这里使用纯净的普通 URL，绝对不会再报 Bad hostname 错误 ===
-          # ⚠️ 请把下面这行的 URL 替换为你真实的 Gitee 仓库克隆地址 ⚠️
-          git remote add origin https://gitee.com/mesbowdon/openwebui-package.git
+          # === 这样拼接出来的 URL 绝对合法，且带有完整的鉴权权限，无需额外读取凭据 ===
+          # ⚠️ 请将下面 URL 末尾的 mesbowdon/openwebui-package.git 替换为你真实的 Gitee 路径 ⚠️
+          git remote add origin https://${ENCODED_USER}:${ENCODED_PASS}@gitee.com/mesbowdon/openwebui-package.git
           
           git branch -M main
           git add openwebui.tar.gz
@@ -45,6 +45,6 @@ jobs:
           git config --global user.email "action@github.com"
           git commit -m "delivery: openwebui image package"
           
-          echo "=== 开始向 Gitee 发起冲击，大包全速上传中 ==="
+          echo "=== 开始向 Gitee 发起冲击，大包全全速上传中 ==="
           git push -f origin main
           echo "=== 传输完毕！请回到国内网络享受极速下载 ==="
